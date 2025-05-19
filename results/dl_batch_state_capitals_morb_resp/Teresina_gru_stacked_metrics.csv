@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+7.198562888942996,8.236272753681208,-0.46408473791143456,Teresina,gru_stacked,12,4,zscore,

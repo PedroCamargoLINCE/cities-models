@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+52.96294175751901,72.50256849267218,0.5179879113589871,São Paulo,gru_stacked,12,4,zscore,

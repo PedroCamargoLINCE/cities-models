@@ -1,0 +1,6 @@
+Fortaleza (2304400): NaNs in data splits
+Vitória (3205309): NaNs in data splits
+Goiânia (5208707): NaNs in data splits
+Campo Grande (5002704): NaNs in data splits
+Curitiba (4106902): NaNs in data splits
+Florianópolis (4205407): NaNs in data splits

@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+21.50368854567801,23.94403000735184,-2.2096895727621924,Brasília,gru_stacked,12,4,zscore,

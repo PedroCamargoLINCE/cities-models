@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+7.6383606974869425,9.460360186325088,-0.5821884080510014,Aracaju,gru_stacked,12,4,zscore,

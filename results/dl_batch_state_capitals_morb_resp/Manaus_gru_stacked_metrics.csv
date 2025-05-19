@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+19.713769571393172,21.47500194798519,-0.9857972417206338,Manaus,gru_stacked,12,4,zscore,

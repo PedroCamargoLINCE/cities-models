@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+3.387052650108247,3.8800649159023264,-0.5712017218614112,Palmas,gru_stacked,12,4,zscore,

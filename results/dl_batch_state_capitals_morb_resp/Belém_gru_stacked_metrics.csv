@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+9.502951876481623,12.872914666885361,-0.1921031728354019,Belém,gru_stacked,12,4,zscore,

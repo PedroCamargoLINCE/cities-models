@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+37.884915469114176,50.03287128036566,0.06301549839326914,Rio de Janeiro,gru_stacked,12,4,zscore,

@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+8.451379114425517,10.611344503925542,-0.053057122988622085,Maceió,gru_stacked,12,4,zscore,

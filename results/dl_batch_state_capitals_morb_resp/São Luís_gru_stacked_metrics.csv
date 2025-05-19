@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+6.814104038687686,9.786752300268928,0.31343293308602893,São Luís,gru_stacked,12,4,zscore,

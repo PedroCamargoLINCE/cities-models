@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+3.314413298044264,4.690449513226194,-0.29489684373134395,Porto Velho,gru_stacked,12,4,zscore,

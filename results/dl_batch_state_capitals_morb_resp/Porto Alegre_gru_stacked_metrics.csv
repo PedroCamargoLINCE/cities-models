@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+8.204444718887567,10.572044408652136,0.5291536623871151,Porto Alegre,gru_stacked,12,4,zscore,

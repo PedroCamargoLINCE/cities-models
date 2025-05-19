@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+19.676806867347125,24.36975698505368,-0.02453747197154965,Belo Horizonte,gru_stacked,12,4,zscore,

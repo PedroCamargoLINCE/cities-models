@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+2.894731821041859,3.645359105208703,0.07860885010509044,Cuiabá,gru_stacked,12,4,zscore,
