@@ -1,0 +1,21 @@
+# Ignore VS Code settings and history
+.vscode/
+.history/
+
+# Ignore GitHub instructions folder
+.github/instructions/
+
+# Ignore data folder (contains datasets, not tracked by git)
+data/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS generated files
+.DS_Store
+Thumbs.db
