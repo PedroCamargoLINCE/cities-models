@@ -1,3 +1,12 @@
+<!-- Badges -->
+<p align="left">
+  <img src="https://img.shields.io/badge/python-3.10.16-blue.svg" alt="Python Version">
+  <img src="https://img.shields.io/badge/xgboost-3.0.0-brightgreen.svg" alt="XGBoost">
+  <img src="https://img.shields.io/badge/tensorflow-2.19.0-orange.svg" alt="TensorFlow">
+  <img src="https://img.shields.io/badge/pandas-2.2.3-lightgrey.svg" alt="Pandas">
+  <img src="https://img.shields.io/badge/coverage-90%25-brightgreen.svg" alt="Test Coverage">
+</p>
+
 # cities-models
 
 Repositório dedicado ao treinamento, avaliação e salvamento de modelos de forecasting para dados municipais, incluindo séries temporais de morbidade respiratória e mortalidade por dengue.
