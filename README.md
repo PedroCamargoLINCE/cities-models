@@ -13,7 +13,7 @@ Repositório dedicado ao treinamento, avaliação e salvamento de modelos de for
 
 ## Descrição
 
-Este projeto explora diversas abordagens de modelagem para previsão de indicadores de saúde em municípios brasileiros. Os modelos implementados variam desde baselines simples até redes neurais profundas e modelos baseados em árvores como XGBoost. O objetivo principal é fornecer uma estrutura modular para testar e comparar diferentes técnicas de forecasting.
+Este projeto explora diversas abordagens de modelagem para previsão de indicadores de saúde em municípios brasileiros. Os modelos implementados variam desde baselines simples até redes neurais profundas e modelos baseados em árvores como XGBoost. O objetivo principal é fornecer uma estrutura modular para testar e comparar diferentes técnicas de forecasting. Os notebook experimentais de treinamento individual trabalha em cima do nosso maior edge case, e cidade com mais dificuldade para convergëncia dos modelos: São Paulo (3550308)
 
 ## Estrutura do Projeto
 
