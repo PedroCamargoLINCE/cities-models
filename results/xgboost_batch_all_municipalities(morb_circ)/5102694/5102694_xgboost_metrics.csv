@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization,val_size
+11.363206653129234,15.75540362313189,-6.059324346485394,5102694,xgboost,8,4,,

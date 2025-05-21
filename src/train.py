@@ -5,6 +5,16 @@ import numpy as np
 import os
 from typing import Dict, Any, Optional
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np
+
+def reduce_to_1d(arr):
+    arr = np.asarray(arr)
+    if arr.ndim == 1:
+        return arr
+    if arr.ndim == 2 and arr.shape[1] == 1:
+        return arr.ravel()
+    # For sums, they should already be 1D from prepare_data_for_model or model output
+    return arr.ravel() # Ensure 1D
 
 # For deep learning models
 try:
@@ -40,48 +50,23 @@ def train_model(model, X_train, y_train, X_val=None, y_val=None, epochs=100, bat
         model.fit(X_train, y_train)
         return None
 
-def evaluate_model(model, X_test, y_test, scaler=None, feature_columns=None) -> Dict[str, float]:
-    """
-    Evaluate model and return MAE, RMSE, R2. Always denormalizes predictions and targets if scaler is provided.
-    Robustly handles shape issues for y_test/y_pred (always 1D, sum if 2D with >1 col).
-    """
-    if hasattr(model, 'predict'):
-        try:
-            y_pred = model.predict(X_test, feature_columns=feature_columns)
-        except TypeError:
-            y_pred = model.predict(X_test)
+def evaluate_model(model, X_test, y_test, scaler=None, target_idx=0, forecast_horizon=1):
+    y_pred_scaled = model.predict(X_test)
+
+    y_true_scaled = reduce_to_1d(y_test)
+    y_pred_scaled = reduce_to_1d(y_pred_scaled)
+
+    if scaler:
+        # Denormalize using the correct formula for sums of scaled values
+        y_true_denorm = y_true_scaled * scaler.scale_[target_idx] + forecast_horizon * scaler.mean_[target_idx]
+        y_pred_denorm = y_pred_scaled * scaler.scale_[target_idx] + forecast_horizon * scaler.mean_[target_idx]
     else:
-        raise ValueError('Model does not have predict method')
-    # Ensure y_test and y_pred are numpy arrays
-    y_test = np.asarray(y_test)
-    y_pred = np.asarray(y_pred)
-    # Robustly reduce to 1D: if 2D and shape[1]>1, sum across axis=1 (for 4-week sum target)
-    def reduce_to_1d(arr):
-        if arr.ndim == 1:
-            return arr
-        if arr.ndim == 2:
-            if arr.shape[1] == 1:
-                return arr.ravel()
-            else:
-                return arr.sum(axis=1)
-        raise ValueError(f"Unexpected array shape: {arr.shape}")
-    y_test = reduce_to_1d(y_test)
-    y_pred = reduce_to_1d(y_pred)
-    # Inverse transform if scaler is provided (handle multi-feature scaler)
-    if scaler is not None and hasattr(scaler, 'scale_') and hasattr(scaler, 'mean_'):
-        if scaler.scale_.shape[0] > 1:
-            # Only use the first column's params (target)
-            y_test = y_test * scaler.scale_[0] + scaler.mean_[0]
-            y_pred = y_pred * scaler.scale_[0] + scaler.mean_[0]
-        else:
-            y_test = scaler.inverse_transform(y_test.reshape(-1, 1)).flatten()
-            y_pred = scaler.inverse_transform(y_pred.reshape(-1, 1)).flatten()
-    # Ensure both are 1D
-    y_test = y_test.flatten()
-    y_pred = y_pred.flatten()
-    mae = float(mean_absolute_error(y_test, y_pred))
-    rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
-    r2 = float(r2_score(y_test, y_pred))
+        y_true_denorm = y_true_scaled
+        y_pred_denorm = y_pred_scaled
+
+    mae = mean_absolute_error(y_true_denorm, y_pred_denorm)
+    rmse = np.sqrt(mean_squared_error(y_true_denorm, y_pred_denorm))
+    r2 = r2_score(y_true_denorm, y_pred_denorm)
     return {'mae': mae, 'rmse': rmse, 'r2': r2}
 
 def generate_forecasts(model, X_test):
