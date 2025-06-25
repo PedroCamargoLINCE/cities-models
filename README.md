@@ -95,6 +95,7 @@ Os principais fluxos de trabalho e experimentações são conduzidos através do
 3.  Navegue até a pasta `notebooks/` e abra o notebook desejado para executar as análises e treinamentos.
 
 Os dados de entrada devem estar na pasta `data/`. Os resultados dos modelos, como previsões e métricas, são geralmente salvos na pasta `results/` ou `notebooks/results/`.
+Previsões de longo prazo geradas a partir dos modelos XGBoost são salvas em `long_term_forecasts/` e podem ser produzidas executando `python -m src.long_term_forecast`.
 
 ## Modelos Implementados
 
