@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.5114485345059637,0.860359625834627,0.834823772348783,Fortaleza,gru_simple,2304400,12,200,32

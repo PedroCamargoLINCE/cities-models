@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+1.2517174643102007,1.9150525414394979,0.4947730354457719,Palmas,gru_simple,1721000,12,200,32

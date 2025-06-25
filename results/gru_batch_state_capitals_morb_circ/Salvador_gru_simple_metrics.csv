@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.7256370105990072,1.0191711617327575,-0.21634637130936119,Salvador,gru_simple,2927408,12,200,32

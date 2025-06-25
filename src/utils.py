@@ -70,91 +70,34 @@ def plot_time_series(
 
 
 def plot_forecast(
-    true_values: Union[pd.Series, np.ndarray],
-    predictions: Union[pd.Series, np.ndarray],
-    dates: Optional[pd.DatetimeIndex] = None,
+    dates: pd.DatetimeIndex,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
     title: Optional[str] = None,
-    figsize: Tuple[int, int] = (12, 6),
-    true_label: str = 'Actual',
-    pred_label: str = 'Forecast',
-    true_color: str = 'royalblue',
-    pred_color: str = 'crimson',
-    include_metrics: bool = True,
-    quantiles: Optional[Dict[str, np.ndarray]] = None
+    figsize: Tuple[int, int] = (15, 7),
+    metrics: Optional[Dict[str, float]] = None
 ) -> Figure:
     """
-    Plot actual values vs. forecasts.
-    
-    Args:
-        true_values: Actual values
-        predictions: Predicted values
-        dates: Dates for x-axis (if None, uses indices)
-        title: Plot title
-        figsize: Figure size
-        true_label: Label for actual values
-        pred_label: Label for predictions
-        true_color: Color for actual values
-        pred_color: Color for predictions
-        include_metrics: Whether to include metrics in the title
-        quantiles: Optional dictionary of quantile predictions
-        
-    Returns:
-        Matplotlib Figure object
+    Plot actual values vs. forecasts and optionally display metrics.
     """
     fig, ax = plt.subplots(figsize=figsize)
     
-    # Convert to arrays
-    y_true = np.asarray(true_values).flatten()
-    y_pred = np.asarray(predictions).flatten()
+    ax.plot(dates, y_true, color='royalblue', marker='.', linestyle='-', label='Actual')
+    ax.plot(dates, y_pred, color='red', marker='.', linestyle='-', label='Forecast')
     
-    # Use dates if provided, otherwise use indices
-    x = dates if dates is not None else np.arange(len(y_true))
+    plot_title = title if title else 'Forecast vs Actual'
+    if metrics:
+        metrics_text = f"MAE: {metrics['mae']:.2f}, RMSE: {metrics['rmse']:.2f}, R²: {metrics['r2']:.2f}"
+        plot_title = f"{plot_title}\n{metrics_text}"
     
-    # Plot quantiles first (if provided)
-    if quantiles:
-        for q_name, q_values in quantiles.items():
-            q_values = np.asarray(q_values).flatten()
-            ax.plot(x, q_values, linestyle='--', alpha=0.5, label=q_name)
-        
-        # Plot prediction intervals if p10 and p90 are provided
-        if 'p10' in quantiles and 'p90' in quantiles:
-            p10 = np.asarray(quantiles['p10']).flatten()
-            p90 = np.asarray(quantiles['p90']).flatten()
-            ax.fill_between(x, p10, p90, alpha=0.2, color='gray', label='80% Prediction Interval')
-    
-    # Plot actual and predicted values
-    ax.plot(x, y_true, color=true_color, marker='o', markersize=4, label=true_label)
-    ax.plot(x, y_pred, color=pred_color, marker='x', markersize=4, label=pred_label)
-    
-    # Calculate metrics
-    if include_metrics:
-        mae = mean_absolute_error(y_true, y_pred)
-        rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-        r2 = r2_score(y_true, y_pred)
-        
-        metrics_text = f'MAE: {mae:.2f}, RMSE: {rmse:.2f}, R²: {r2:.2f}'
-        if title:
-            title = f'{title}\n{metrics_text}'
-        else:
-            title = metrics_text
-    
-    # Set title and labels
-    if title:
-        ax.set_title(title, fontsize=14)
-    ax.set_xlabel('Date' if dates is not None else 'Time Step', fontsize=12)
+    ax.set_title(plot_title, fontsize=14)
+    ax.set_xlabel('Date', fontsize=12)
     ax.set_ylabel('Value', fontsize=12)
-    
-    # Format x-axis ticks if using dates
-    if dates is not None:
-        plt.xticks(rotation=45)
-        fig.autofmt_xdate()
-    
-    # Add legend and grid
     ax.legend()
-    ax.grid(True, linestyle='--', alpha=0.7)
+    ax.grid(True, linestyle='--', alpha=0.6)
     
+    fig.autofmt_xdate()
     plt.tight_layout()
-    
     return fig
 
 
@@ -308,6 +251,12 @@ def create_results_summary(
     # Concatenate all dataframes
     summary = pd.concat(dfs, ignore_index=True)
     
+    # Ensure metrics are numeric, coercing errors to NaN
+    metric_cols = ['mae', 'rmse', 'r2'] # Add other metrics if they exist
+    for col in metric_cols:
+        if col in summary.columns:
+            summary[col] = pd.to_numeric(summary[col], errors='coerce')
+            
     return summary
 
 
@@ -341,7 +290,15 @@ def generate_report_markdown(results_dir: str) -> str:
     report.append("")
     
     # Group by city and model
-    grouped = summary.groupby(['city', 'model']).mean().reset_index()
+    # Before grouping, ensure metrics are numeric and handle potential NaNs from coercion
+    metric_cols_for_grouping = ['mae', 'rmse', 'r2'] # Ensure these are present and numeric
+    
+    # Drop rows where essential metrics for grouping might be NaN after coercion, if desired
+    # For example, if 'mae' is critical for ranking:
+    # grouped_summary = summary.dropna(subset=['mae'])
+    # For now, we'll let .mean() handle NaNs by skipping them.
+    
+    grouped = summary.groupby(['city', 'model'])[metric_cols_for_grouping].mean().reset_index()
     
     # Format as markdown table
     table = ["| City | Model | MAE | RMSE | R² |", "| ---- | ----- | --- | ---- | -- |"]
@@ -349,11 +306,16 @@ def generate_report_markdown(results_dir: str) -> str:
     for _, row in grouped.iterrows():
         city = row['city']
         model = row['model']
-        mae = row.get('mae', float('nan'))
+        mae = row.get('mae', float('nan')) # .get() is good for safety if a column is missing
         rmse = row.get('rmse', float('nan'))
         r2 = row.get('r2', float('nan'))
         
-        table.append(f"| {city} | {model} | {mae:.4f} | {rmse:.4f} | {r2:.4f} |")
+        # Check if metrics are NaN before formatting, to avoid printing 'nan'
+        mae_str = f"{mae:.4f}" if pd.notna(mae) else "N/A"
+        rmse_str = f"{rmse:.4f}" if pd.notna(rmse) else "N/A"
+        r2_str = f"{r2:.4f}" if pd.notna(r2) else "N/A"
+        
+        table.append(f"| {city} | {model} | {mae_str} | {rmse_str} | {r2_str} |")
     
     report.extend(table)
     report.append("")
@@ -367,13 +329,19 @@ def generate_report_markdown(results_dir: str) -> str:
     
     for city in cities:
         city_data = summary[summary['city'] == city]
-        best_idx = city_data['mae'].idxmin()
-        best_model = city_data.loc[best_idx, 'model']
-        best_mae = city_data.loc[best_idx, 'mae']
-        best_rmse = city_data.loc[best_idx, 'rmse']
-        
-        best_models.append(f"- **{city}**: {best_model} (MAE: {best_mae:.4f}, RMSE: {best_rmse:.4f})")
-    
+        if not city_data.empty and 'mae' in city_data.columns and city_data['mae'].notna().any():
+            best_idx = city_data['mae'].idxmin() # This will fail if all 'mae' are NaN for a city
+            best_model = city_data.loc[best_idx, 'model']
+            best_mae = city_data.loc[best_idx, 'mae']
+            best_rmse = city_data.loc[best_idx, 'rmse'] # Could also be NaN
+            
+            mae_str = f"{best_mae:.4f}" if pd.notna(best_mae) else "N/A"
+            rmse_str = f"{best_rmse:.4f}" if pd.notna(best_rmse) else "N/A"
+            
+            best_models.append(f"- **{city}**: {best_model} (MAE: {mae_str}, RMSE: {rmse_str})")
+        else:
+            best_models.append(f"- **{city}**: No valid MAE data to determine best model")
+            
     report.extend(best_models)
     
     # Join all lines
@@ -452,64 +420,249 @@ def evaluate_model_time_series_split(
     X,
     y,
     n_splits: int = 5,
-    scaler=None,
+    scaler=None, # Scaler for X and y if they were scaled *before* creating sequences
+    target_idx: int = 0, # Index of target variable for denormalization if y_test/y_pred are multi-dim post-scaling
     fit_params: dict = None,
     predict_params: dict = None,
     random_state: int = 42
 ) -> pd.DataFrame:
     """
     Evaluate a model using time series cross-validation (TimeSeriesSplit).
-    
+    Uses the refactored evaluate_model for metric calculation.
+
     Args:
-        model_builder: Function that returns a new, untrained model instance (e.g., lambda: build_lstm(...))
-        X: Input features (numpy array)
-        y: Target values (numpy array)
-        n_splits: Number of splits for TimeSeriesSplit
-        scaler: Optional scaler for inverse transform
-        fit_params: Dict of parameters for model.fit()
-        predict_params: Dict of parameters for model.predict()
-        random_state: Random seed
+        model_builder: Function that returns a new, untrained model instance.
+        X: Input features (numpy array, pre-sequencing).
+        y: Target values (numpy array, pre-sequencing).
+        n_splits: Number of splits for TimeSeriesSplit.
+        scaler: Optional scaler object (e.g., StandardScaler) that was fit on the target variable *before* it was windowed/sequenced.
+                This scaler is used to denormalize y_test and y_pred for metric calculation.
+        target_idx: Index of the target variable if the scaler was fit on a multi-feature array.
+        fit_params: Dict of parameters for model.fit().
+        predict_params: Dict of parameters for model.predict().
+        random_state: Random seed (currently not used by TimeSeriesSplit directly).
         
     Returns:
-        DataFrame with metrics for each split
+        DataFrame with metrics for each split.
     """
+    # Ensure predict_params is a dictionary
+    if predict_params is None:
+        predict_params = {}
+    # Ensure forecast_horizon is set in predict_params, defaulting to 1
+    if 'forecast_horizon' not in predict_params:
+        predict_params['forecast_horizon'] = 1
+
     tscv = TimeSeriesSplit(n_splits=n_splits)
     results = []
     split_num = 1
     
-    for train_idx, test_idx in tscv.split(X):
+    # Assuming X and y are already prepared (e.g., windowed sequences)
+    # If X and y are raw time series, they need to be processed into sequences inside the loop
+    # For now, this function assumes X and y are ready for model.fit/predict
+
+    for train_idx, test_idx in tscv.split(X): # X here should be the windowed X_full
         X_train, X_test = X[train_idx], X[test_idx]
-        y_train, y_test = y[train_idx], y[test_idx]
+        y_train, y_test = y[train_idx], y[test_idx] # y_full corresponding to X_full
         
         model = model_builder()
         
         if fit_params is None:
             fit_params = {}
-        if predict_params is None:
-            predict_params = {}
         
-        model.fit(X_train, y_train, **fit_params)
+        # Fit the model
+        # Keras models might need verbose=0 in fit_params for cleaner output during CV
+        if hasattr(model, 'fit') and 'epochs' in model.fit.__code__.co_varnames: # Basic check for Keras-like model
+            if 'verbose' not in fit_params:
+                 fit_params_cv = {**fit_params, 'verbose': 0}
+            else:
+                 fit_params_cv = fit_params
+            model.fit(X_train, y_train, **fit_params_cv)
+        else:
+            model.fit(X_train, y_train, **fit_params) # For sklearn-like models
+        
+        # Make predictions
         y_pred = model.predict(X_test, **predict_params)
         
-        # Inverse transform if scaler is provided
-        if scaler is not None:
-            y_test_inv = scaler.inverse_transform(y_test.reshape(-1, 1)).flatten()
-            y_pred_inv = scaler.inverse_transform(y_pred.reshape(-1, 1)).flatten()
-        else:
-            y_test_inv = y_test
-            y_pred_inv = y_pred
+        # y_test and y_pred are from the model (potentially scaled if model outputs scaled values
+        # or if y_train/y_test were scaled versions of the original target sums).
+        # The 'scaler' argument should be the one fit on the original target sums if normalization was applied
+        # *before* y_train/y_test were formed.
         
-        mae = mean_absolute_error(y_test_inv, y_pred_inv)
-        rmse = np.sqrt(mean_squared_error(y_test_inv, y_pred_inv))
-        r2 = r2_score(y_test_inv, y_pred_inv)
+        # Use the main evaluate_model function
+        # The scaler here is tricky. If y_test/y_pred are already on the original scale of the target (e.g. sum of next N weeks),
+        # then scaler should be None. If they are on a normalized scale, then scaler should be the one
+        # used to normalize that target representation.
+        metrics = evaluate_model(y_test, y_pred, scaler=scaler, target_idx=target_idx)
         
         results.append({
             'split': split_num,
-            'mae': mae,
-            'rmse': rmse,
-            'r2': r2
+            'mae': metrics['mae'],
+            'rmse': metrics['rmse'],
+            'r2': metrics['r2']
         })
-        
         split_num += 1
-    
+        
     return pd.DataFrame(results)
+
+
+def plot_target_distribution(
+    df: pd.DataFrame, 
+    target_column: str, 
+    title: str = "Target Distribution",
+    figsize: Tuple[int, int] = (10, 6)
+) -> Figure:
+    """
+    Plot the distribution of the target variable.
+    
+    Args:
+        df: DataFrame containing the target column
+        target_column: Name of the target column
+        title: Plot title
+        figsize: Figure size
+        
+    Returns:
+        Matplotlib Figure object
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    # Create histogram with KDE
+    sns.histplot(df[target_column], kde=True, bins=30, color='royalblue', ax=ax)
+    
+    ax.set_title(title)
+    ax.set_xlabel(target_column)
+    ax.set_ylabel('Frequency')
+    ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    return fig
+
+
+def plot_autocorrelation(
+    df: pd.DataFrame, 
+    target_column: str, 
+    title: str = "Target Autocorrelation",
+    figsize: Tuple[int, int] = (12, 8),
+    lags: int = 40
+) -> Figure:
+    """
+    Plot autocorrelation and partial autocorrelation functions.
+    
+    Args:
+        df: DataFrame containing the target column
+        target_column: Name of the target column
+        title: Plot title
+        figsize: Figure size
+        lags: Number of lags to plot    
+    
+    Returns:
+        Matplotlib Figure object
+    """
+    try:
+        from statsmodels.tsa.stattools import acf, pacf
+        from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+    except ImportError:
+        print("Warning: statsmodels not available. Cannot create autocorrelation plots.")
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.text(0.5, 0.5, 'statsmodels not available\nfor autocorrelation plots', 
+                ha='center', va='center', fontsize=14)
+        ax.set_title(title)
+        return fig
+    
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figsize)
+    
+    # Autocorrelation function
+    plot_acf(df[target_column].dropna(), ax=ax1, lags=lags, title=f'{title} - ACF')
+    
+    # Partial autocorrelation function
+    plot_pacf(df[target_column].dropna(), ax=ax2, lags=lags, title=f'{title} - PACF')
+    
+    plt.tight_layout()
+    return fig
+
+
+def plot_time_series_decomposition(
+    df: pd.DataFrame, 
+    target_column: str, 
+    model: str = 'additive', 
+    period: int = 52,
+    title: str = "Time Series Decomposition",
+    figsize: Tuple[int, int] = (12, 10)
+) -> Figure:
+    """
+    Plot time series decomposition (trend, seasonal, residual).
+    
+    Args:
+        df: DataFrame containing the target column
+        target_column: Name of the target column
+        model: Type of decomposition ('additive' or 'multiplicative')
+        period: Period for seasonal decomposition
+        title: Plot title
+        figsize: Figure size
+        
+    Returns:
+        Matplotlib Figure object
+    """
+    try:
+        from statsmodels.tsa.seasonal import seasonal_decompose
+    except ImportError:
+        print("Warning: statsmodels not available. Cannot create decomposition plots.")
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.text(0.5, 0.5, 'statsmodels not available\nfor time series decomposition', 
+                ha='center', va='center', fontsize=14)
+        ax.set_title(title)
+        return fig
+    
+    # Ensure we have enough data for decomposition
+    if len(df) < 2 * period:
+        print(f"Warning: Not enough data for decomposition (need at least {2*period} points, have {len(df)})")
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.text(0.5, 0.5, f'Not enough data for decomposition\n(need at least {2*period} points)', 
+                ha='center', va='center', fontsize=14)
+        ax.set_title(title)
+        return fig
+    
+    # Perform decomposition
+    decomposition = seasonal_decompose(df[target_column].dropna(), model=model, period=period)
+    
+    # Create plots
+    fig, axes = plt.subplots(4, 1, figsize=figsize)
+    
+    decomposition.observed.plot(ax=axes[0], title=f'{title} - Original')
+    decomposition.trend.plot(ax=axes[1], title='Trend')
+    decomposition.seasonal.plot(ax=axes[2], title='Seasonal')
+    decomposition.resid.plot(ax=axes[3], title='Residual')
+    
+    for ax in axes:
+        ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    return fig
+
+
+def plot_actual_vs_predicted_scatter(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    title: Optional[str] = None,
+    figsize: Tuple[int, int] = (8, 8),
+    metrics: Optional[Dict[str, float]] = None
+) -> Figure:
+    """
+    Create a scatter plot of actual vs. predicted values.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    ax.scatter(y_true, y_pred, alpha=0.5)
+    ax.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], '--', color='black', lw=2)
+    
+    plot_title = title if title else 'Actual vs Predicted'
+    if metrics:
+        metrics_text = f"MAE: {metrics['mae']:.2f}, RMSE: {metrics['rmse']:.2f}, R²: {metrics['r2']:.2f}"
+        plot_title = f"{plot_title}\n{metrics_text}"
+
+    ax.set_title(plot_title, fontsize=14)
+    ax.set_xlabel('Actual', fontsize=12)
+    ax.set_ylabel('Predicted', fontsize=12)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    
+    plt.tight_layout()
+    return fig

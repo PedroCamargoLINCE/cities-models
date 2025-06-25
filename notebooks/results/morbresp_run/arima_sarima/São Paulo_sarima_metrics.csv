@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,order,seasonal_order
+131.8943337788748,169.36916958495246,-1.072554030728936,São Paulo,sarima,"(4, 0, 4)","(0, 1, 1, 52)"

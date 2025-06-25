@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.48979164334270064,0.7308950137582216,0.7585534192170147,Aracaju,gru_simple,2800308,12,200,32

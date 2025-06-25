@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.8115462755983783,1.5230408122942531,-0.8250842904727924,Curitiba,gru_simple,4106902,12,200,32

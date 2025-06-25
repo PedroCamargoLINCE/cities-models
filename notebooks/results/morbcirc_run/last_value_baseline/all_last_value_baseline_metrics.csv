@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,sequence_length,forecast_horizon,normalization
+0.31702256155861996,0.5565305100029418,-0.0012295114184230904,all,last_value_baseline,8,1,

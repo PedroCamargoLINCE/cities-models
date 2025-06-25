@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.34947897441565495,0.41601910278054294,0.2818373656977403,Natal,gru_simple,2408102,12,200,32

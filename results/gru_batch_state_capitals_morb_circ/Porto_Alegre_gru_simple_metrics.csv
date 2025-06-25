@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+1.4762505392810212,2.265869902066432,0.25992230603915123,Porto_Alegre,gru_simple,4314902,12,200,32

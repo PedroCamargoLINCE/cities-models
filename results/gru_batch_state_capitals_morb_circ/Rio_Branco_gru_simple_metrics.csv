@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.4941030981608513,0.6011208127620746,0.5931724614403917,Rio_Branco,gru_simple,1200401,12,200,32

@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+1.4184918451727098,1.990784502270035,0.6522461787352581,Brasilia,gru_simple,5300108,12,200,32

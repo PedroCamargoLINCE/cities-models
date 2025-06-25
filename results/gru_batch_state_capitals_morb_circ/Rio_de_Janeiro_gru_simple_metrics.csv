@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.4428988276856819,0.6109770483356173,0.32111830065676894,Rio_de_Janeiro,gru_simple,3304557,12,200,32

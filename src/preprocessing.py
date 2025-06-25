@@ -5,7 +5,6 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from typing import Tuple, Dict, Optional, List
 
 def load_city_data(filepath: str) -> pd.DataFrame:
@@ -58,23 +57,6 @@ def clean_timeseries(df: pd.DataFrame, target_column: str) -> pd.DataFrame:
     # df[target_column] = df[target_column].interpolate().ffill().bfill()
     return df
 
-def normalize_data(
-    df: pd.DataFrame, 
-    columns: Optional[List[str]] = None, 
-    scaler: Optional[StandardScaler] = None
-) -> Tuple[pd.DataFrame, StandardScaler]:
-    """
-    Z-score normalization for selected columns. Returns normalized df and scaler.
-    """
-    if columns is None:
-        columns = df.columns.tolist()
-    if scaler is None:
-        scaler = StandardScaler()
-        df[columns] = scaler.fit_transform(df[columns])
-    else:
-        df[columns] = scaler.transform(df[columns])
-    return df, scaler
-
 def create_sequences(
     data: np.ndarray, 
     seq_length: int, 
@@ -95,64 +77,71 @@ def create_sequences(
             y.append(data[i+seq_length+forecast_horizon-1, 0])
     return np.array(X), np.array(y)
 
-def time_series_train_test_split(
-    df: pd.DataFrame, 
-    test_size: int
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Split DataFrame into train/test sets, preserving time order.
-    """
-    train = df.iloc[:-test_size]
-    test = df.iloc[-test_size:]
-    return train, test
-
 def prepare_data_for_model(
     df: pd.DataFrame,
     target_column: str,
     sequence_length: int,
     forecast_horizon: int = 1,
-    normalization: Optional[str] = 'zscore',
-    feature_columns: Optional[List[str]] = None,
     test_size: int = 52,
-    val_size: Optional[int] = None
+    val_size: int = 52,
+    feature_columns: Optional[List[str]] = None,
+    target_mode: str = 'sum'
 ) -> Dict:
     """
-    Full pipeline: normalization, split, sequence creation.
-    Returns dict with X_train, y_train, X_val, y_val, X_test, y_test, scaler, test_df.
-    If feature_columns is None, uses all columns except 'CD_MUN' and 'week'.
+    Full data preparation pipeline: split, scale, and create sequences.
+    
+    This function implements a leak-proof pipeline:
+    1. Splits data chronologically into train, validation, and test sets.
+    2. Fits a StandardScaler ONLY on the training data.
+    3. Applies the fitted scaler to transform train, validation, and test sets.
+    4. Creates input (X) and output (y) sequences for the model.
+
+    Args:
+        df (pd.DataFrame): The input dataframe with time series data.
+        target_column (str): The name of the column to be predicted.
+        sequence_length (int): The number of time steps in each input sequence.
+        forecast_horizon (int): The number of time steps to forecast ahead.
+        test_size (int): The number of samples for the test set.
+        val_size (int): The number of samples for the validation set.
+        feature_columns (Optional[List[str]]): List of columns to use as features. 
+                                               If None, all columns except identifiers are used.
+        target_mode (str): 'sum' or 'last'. Defines how the target `y` is created.
+
+    Returns:
+        Dict: A dictionary containing all data splits (X_train, y_train, etc.), 
+              the fitted scaler, and the original data splits (for plotting/analysis).
     """
     if feature_columns is None:
-        feature_columns = [col for col in df.columns if col not in ['CD_MUN', 'week']]
-    feature_columns = [c for c in feature_columns if c != target_column]
-    feature_columns = [target_column] + feature_columns
-    scaler = None
-    if normalization == 'zscore':
-        df, scaler = normalize_data(df.copy(), columns=feature_columns)
-    # Split train/test
-    train_df, test_df = time_series_train_test_split(df, test_size)
-    # Validation split from train
-    if val_size is None:
-        val_size = max(1, int(0.1 * len(train_df)))  # 10% of train, at least 1
-    if val_size > 0 and len(train_df) > val_size + sequence_length + forecast_horizon:
-        val_df = train_df.iloc[-val_size:]
-        train_df = train_df.iloc[:-val_size]
-        X_val, y_val = create_sequences(
-            val_df[feature_columns].values, sequence_length, forecast_horizon, target_mode='sum')
-    else:
-        X_val, y_val = None, None
-    # Sequences
-    X_train, y_train = create_sequences(
-        train_df[feature_columns].values, sequence_length, forecast_horizon, target_mode='sum')
-    X_test, y_test = create_sequences(
-        test_df[feature_columns].values, sequence_length, forecast_horizon, target_mode='sum')
+        feature_columns = [col for col in df.columns if col not in ['CD_MUN', 'week', 'city', 'state']]
+
+    if target_column in feature_columns:
+        feature_columns.remove(target_column)
+    ordered_features = [target_column] + feature_columns
+    data_df = df[ordered_features].copy()
+
+    if len(data_df) < test_size + val_size + sequence_length:
+        raise ValueError(f"Not enough data for given test/val/sequence sizes.")
+
+    train_df = data_df.iloc[:-(test_size + val_size)]
+    val_df = data_df.iloc[-(test_size + val_size):-test_size]
+    test_df = data_df.iloc[-test_size:]
+
+    scaler = StandardScaler()
+    train_scaled = scaler.fit_transform(train_df)
+    val_scaled = scaler.transform(val_df)
+    test_scaled = scaler.transform(test_df)
+
+    X_train, y_train = create_sequences(train_scaled, sequence_length, forecast_horizon, target_mode)
+    X_val, y_val = create_sequences(val_scaled, sequence_length, forecast_horizon, target_mode)
+    X_test, y_test = create_sequences(test_scaled, sequence_length, forecast_horizon, target_mode)
+
     return {
-        'X_train': X_train,
-        'y_train': y_train,
-        'X_val': X_val,
-        'y_val': y_val,
-        'X_test': X_test,
-        'y_test': y_test,
+        'X_train': X_train, 'y_train': y_train,
+        'X_val': X_val, 'y_val': y_val,
+        'X_test': X_test, 'y_test': y_test,
         'scaler': scaler,
-        'test_df': test_df,
-        'feature_columns': feature_columns
+        'feature_columns': ordered_features,
+        'original_train_df': train_df,
+        'original_val_df': val_df,
+        'original_test_df': test_df,
     }

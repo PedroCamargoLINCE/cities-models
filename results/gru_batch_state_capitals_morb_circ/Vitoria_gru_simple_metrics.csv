@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+2.5992450525813617,4.78014155167038,0.10995569746975153,Vitoria,gru_simple,3205309,12,200,32

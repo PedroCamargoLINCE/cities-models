@@ -1,0 +1,254 @@
+2025-06-24 21:54:30,047 - INFO - --- Configuração do Experimento em Lote ---
+2025-06-24 21:54:30,048 - INFO - Execução: gru_batch_state_capitals_morb_circ
+2025-06-24 21:54:30,049 - INFO - Total de cidades a serem processadas: 27
+2025-06-24 21:54:30,050 - INFO - Resultados serão salvos em: results\gru_batch_state_capitals_morb_circ
+2025-06-24 21:54:30,051 - INFO - ----------------------------------------
+2025-06-24 21:55:19,788 - INFO - Dataset completo carregado com sucesso: (6344064, 11)
+2025-06-24 21:55:19,790 - INFO - ===== Iniciando processamento para Porto_Velho (1100205) =====
+2025-06-24 21:55:19,815 - INFO - Dados para Porto_Velho filtrados e limpos: (1152, 10)
+2025-06-24 21:55:19,827 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:56:59,521 - WARNING - From c:\Users\pedro\OneDrive - Unesp\Documentos\GitHub\treinamento_clusters_hpc\.conda\lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2025-06-24 21:57:13,483 - INFO - Modelo treinado para Porto_Velho. Perda final de validação: 0.1035
+2025-06-24 21:57:13,724 - INFO - Métricas de teste para Porto_Velho: MAE=0.7232, RMSE=0.9870, R²=0.3304
+2025-06-24 21:57:14,294 - INFO - Gráficos salvos para Porto_Velho
+2025-06-24 21:57:14,302 - INFO - Métricas e previsões salvas para Porto_Velho
+2025-06-24 21:57:14,303 - INFO - ===== Processamento para Porto_Velho concluído =====
+
+2025-06-24 21:57:14,304 - INFO - ===== Iniciando processamento para Rio_Branco (1200401) =====
+2025-06-24 21:57:14,315 - INFO - Dados para Rio_Branco filtrados e limpos: (1152, 10)
+2025-06-24 21:57:14,322 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:57:28,514 - INFO - Modelo treinado para Rio_Branco. Perda final de validação: 0.2591
+2025-06-24 21:57:28,778 - INFO - Métricas de teste para Rio_Branco: MAE=0.4941, RMSE=0.6011, R²=0.5932
+2025-06-24 21:57:29,292 - INFO - Gráficos salvos para Rio_Branco
+2025-06-24 21:57:29,296 - INFO - Métricas e previsões salvas para Rio_Branco
+2025-06-24 21:57:29,296 - INFO - ===== Processamento para Rio_Branco concluído =====
+
+2025-06-24 21:57:29,297 - INFO - ===== Iniciando processamento para Manaus (1302603) =====
+2025-06-24 21:57:29,305 - INFO - Dados para Manaus filtrados e limpos: (1152, 10)
+2025-06-24 21:57:29,312 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:57:40,197 - INFO - Modelo treinado para Manaus. Perda final de validação: 0.1075
+2025-06-24 21:57:40,317 - WARNING - 5 out of the last 9 calls to <function TensorFlowTrainer.make_predict_function.<locals>.one_step_on_data_distributed at 0x000002478A42D2D0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-06-24 21:57:40,434 - WARNING - 6 out of the last 10 calls to <function TensorFlowTrainer.make_predict_function.<locals>.one_step_on_data_distributed at 0x000002478A42D2D0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-06-24 21:57:40,464 - INFO - Métricas de teste para Manaus: MAE=0.3507, RMSE=0.4925, R²=-0.4553
+2025-06-24 21:57:40,999 - INFO - Gráficos salvos para Manaus
+2025-06-24 21:57:41,004 - INFO - Métricas e previsões salvas para Manaus
+2025-06-24 21:57:41,005 - INFO - ===== Processamento para Manaus concluído =====
+
+2025-06-24 21:57:41,005 - INFO - ===== Iniciando processamento para Boa_Vista (1400100) =====
+2025-06-24 21:57:41,015 - INFO - Dados para Boa_Vista filtrados e limpos: (1152, 10)
+2025-06-24 21:57:41,022 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:57:52,706 - INFO - Modelo treinado para Boa_Vista. Perda final de validação: 0.1270
+2025-06-24 21:57:52,975 - INFO - Métricas de teste para Boa_Vista: MAE=1.5811, RMSE=2.7103, R²=0.4264
+2025-06-24 21:57:53,559 - INFO - Gráficos salvos para Boa_Vista
+2025-06-24 21:57:53,564 - INFO - Métricas e previsões salvas para Boa_Vista
+2025-06-24 21:57:53,564 - INFO - ===== Processamento para Boa_Vista concluído =====
+
+2025-06-24 21:57:53,565 - INFO - ===== Iniciando processamento para Belem (1501402) =====
+2025-06-24 21:57:53,573 - INFO - Dados para Belem filtrados e limpos: (1152, 10)
+2025-06-24 21:57:53,581 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:58:14,660 - INFO - Modelo treinado para Belem. Perda final de validação: 0.0320
+2025-06-24 21:58:14,905 - INFO - Métricas de teste para Belem: MAE=0.8470, RMSE=1.4616, R²=0.5665
+2025-06-24 21:58:15,457 - INFO - Gráficos salvos para Belem
+2025-06-24 21:58:15,461 - INFO - Métricas e previsões salvas para Belem
+2025-06-24 21:58:15,462 - INFO - ===== Processamento para Belem concluído =====
+
+2025-06-24 21:58:15,462 - INFO - ===== Iniciando processamento para Macapa (1600303) =====
+2025-06-24 21:58:15,475 - INFO - Dados para Macapa filtrados e limpos: (1152, 10)
+2025-06-24 21:58:15,483 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:58:36,113 - INFO - Modelo treinado para Macapa. Perda final de validação: 0.0653
+2025-06-24 21:58:36,368 - INFO - Métricas de teste para Macapa: MAE=0.7158, RMSE=1.1359, R²=0.6473
+2025-06-24 21:58:36,913 - INFO - Gráficos salvos para Macapa
+2025-06-24 21:58:36,917 - INFO - Métricas e previsões salvas para Macapa
+2025-06-24 21:58:36,918 - INFO - ===== Processamento para Macapa concluído =====
+
+2025-06-24 21:58:36,919 - INFO - ===== Iniciando processamento para Palmas (1721000) =====
+2025-06-24 21:58:36,928 - INFO - Dados para Palmas filtrados e limpos: (1152, 10)
+2025-06-24 21:58:36,936 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:58:49,560 - INFO - Modelo treinado para Palmas. Perda final de validação: 0.0628
+2025-06-24 21:58:49,818 - INFO - Métricas de teste para Palmas: MAE=1.2517, RMSE=1.9151, R²=0.4948
+2025-06-24 21:58:50,347 - INFO - Gráficos salvos para Palmas
+2025-06-24 21:58:50,351 - INFO - Métricas e previsões salvas para Palmas
+2025-06-24 21:58:50,351 - INFO - ===== Processamento para Palmas concluído =====
+
+2025-06-24 21:58:50,352 - INFO - ===== Iniciando processamento para Sao_Luis (2111300) =====
+2025-06-24 21:58:50,364 - INFO - Dados para Sao_Luis filtrados e limpos: (1152, 10)
+2025-06-24 21:58:50,371 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:58:55,637 - INFO - Modelo treinado para Sao_Luis. Perda final de validação: 0.1213
+2025-06-24 21:58:55,889 - INFO - Métricas de teste para Sao_Luis: MAE=0.5028, RMSE=0.7497, R²=0.4466
+2025-06-24 21:58:56,416 - INFO - Gráficos salvos para Sao_Luis
+2025-06-24 21:58:56,420 - INFO - Métricas e previsões salvas para Sao_Luis
+2025-06-24 21:58:56,420 - INFO - ===== Processamento para Sao_Luis concluído =====
+
+2025-06-24 21:58:56,421 - INFO - ===== Iniciando processamento para Teresina (2211001) =====
+2025-06-24 21:58:56,429 - INFO - Dados para Teresina filtrados e limpos: (1152, 10)
+2025-06-24 21:58:56,436 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:59:27,117 - INFO - Modelo treinado para Teresina. Perda final de validação: 0.1063
+2025-06-24 21:59:27,373 - INFO - Métricas de teste para Teresina: MAE=0.7698, RMSE=1.1024, R²=0.3029
+2025-06-24 21:59:27,958 - INFO - Gráficos salvos para Teresina
+2025-06-24 21:59:27,962 - INFO - Métricas e previsões salvas para Teresina
+2025-06-24 21:59:27,963 - INFO - ===== Processamento para Teresina concluído =====
+
+2025-06-24 21:59:27,964 - INFO - ===== Iniciando processamento para Fortaleza (2304400) =====
+2025-06-24 21:59:27,974 - INFO - Dados para Fortaleza filtrados e limpos: (1152, 10)
+2025-06-24 21:59:27,983 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:59:37,696 - INFO - Modelo treinado para Fortaleza. Perda final de validação: 0.0563
+2025-06-24 21:59:37,957 - INFO - Métricas de teste para Fortaleza: MAE=0.5114, RMSE=0.8604, R²=0.8348
+2025-06-24 21:59:38,499 - INFO - Gráficos salvos para Fortaleza
+2025-06-24 21:59:38,503 - INFO - Métricas e previsões salvas para Fortaleza
+2025-06-24 21:59:38,504 - INFO - ===== Processamento para Fortaleza concluído =====
+
+2025-06-24 21:59:38,505 - INFO - ===== Iniciando processamento para Natal (2408102) =====
+2025-06-24 21:59:38,513 - INFO - Dados para Natal filtrados e limpos: (1152, 10)
+2025-06-24 21:59:38,520 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 21:59:50,210 - INFO - Modelo treinado para Natal. Perda final de validação: 0.6647
+2025-06-24 21:59:50,455 - INFO - Métricas de teste para Natal: MAE=0.3495, RMSE=0.4160, R²=0.2818
+2025-06-24 21:59:50,992 - INFO - Gráficos salvos para Natal
+2025-06-24 21:59:50,996 - INFO - Métricas e previsões salvas para Natal
+2025-06-24 21:59:50,997 - INFO - ===== Processamento para Natal concluído =====
+
+2025-06-24 21:59:50,998 - INFO - ===== Iniciando processamento para Joao_Pessoa (2507507) =====
+2025-06-24 21:59:51,006 - INFO - Dados para Joao_Pessoa filtrados e limpos: (1152, 10)
+2025-06-24 21:59:51,014 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:00:21,491 - INFO - Modelo treinado para Joao_Pessoa. Perda final de validação: 0.0337
+2025-06-24 22:00:21,742 - INFO - Métricas de teste para Joao_Pessoa: MAE=0.6559, RMSE=0.9355, R²=0.1097
+2025-06-24 22:00:22,310 - INFO - Gráficos salvos para Joao_Pessoa
+2025-06-24 22:00:22,315 - INFO - Métricas e previsões salvas para Joao_Pessoa
+2025-06-24 22:00:22,316 - INFO - ===== Processamento para Joao_Pessoa concluído =====
+
+2025-06-24 22:00:22,316 - INFO - ===== Iniciando processamento para Recife (2611606) =====
+2025-06-24 22:00:22,326 - INFO - Dados para Recife filtrados e limpos: (1152, 10)
+2025-06-24 22:00:22,334 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:00:38,734 - INFO - Modelo treinado para Recife. Perda final de validação: 0.2606
+2025-06-24 22:00:39,034 - INFO - Métricas de teste para Recife: MAE=1.0443, RMSE=1.8980, R²=0.6137
+2025-06-24 22:00:39,620 - INFO - Gráficos salvos para Recife
+2025-06-24 22:00:39,626 - INFO - Métricas e previsões salvas para Recife
+2025-06-24 22:00:39,627 - INFO - ===== Processamento para Recife concluído =====
+
+2025-06-24 22:00:39,627 - INFO - ===== Iniciando processamento para Maceio (2704302) =====
+2025-06-24 22:00:39,641 - INFO - Dados para Maceio filtrados e limpos: (1152, 10)
+2025-06-24 22:00:39,651 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:00:57,839 - INFO - Modelo treinado para Maceio. Perda final de validação: 0.0920
+2025-06-24 22:00:58,112 - INFO - Métricas de teste para Maceio: MAE=0.5354, RMSE=0.9020, R²=0.2467
+2025-06-24 22:00:58,638 - INFO - Gráficos salvos para Maceio
+2025-06-24 22:00:58,643 - INFO - Métricas e previsões salvas para Maceio
+2025-06-24 22:00:58,643 - INFO - ===== Processamento para Maceio concluído =====
+
+2025-06-24 22:00:58,644 - INFO - ===== Iniciando processamento para Aracaju (2800308) =====
+2025-06-24 22:00:58,652 - INFO - Dados para Aracaju filtrados e limpos: (1152, 10)
+2025-06-24 22:00:58,659 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:01:08,966 - INFO - Modelo treinado para Aracaju. Perda final de validação: 0.0682
+2025-06-24 22:01:09,267 - INFO - Métricas de teste para Aracaju: MAE=0.4898, RMSE=0.7309, R²=0.7586
+2025-06-24 22:01:09,879 - INFO - Gráficos salvos para Aracaju
+2025-06-24 22:01:09,886 - INFO - Métricas e previsões salvas para Aracaju
+2025-06-24 22:01:09,888 - INFO - ===== Processamento para Aracaju concluído =====
+
+2025-06-24 22:01:09,889 - INFO - ===== Iniciando processamento para Salvador (2927408) =====
+2025-06-24 22:01:09,902 - INFO - Dados para Salvador filtrados e limpos: (1152, 10)
+2025-06-24 22:01:09,910 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:01:22,309 - INFO - Modelo treinado para Salvador. Perda final de validação: 0.0328
+2025-06-24 22:01:22,562 - INFO - Métricas de teste para Salvador: MAE=0.7256, RMSE=1.0192, R²=-0.2163
+2025-06-24 22:01:23,141 - INFO - Gráficos salvos para Salvador
+2025-06-24 22:01:23,145 - INFO - Métricas e previsões salvas para Salvador
+2025-06-24 22:01:23,146 - INFO - ===== Processamento para Salvador concluído =====
+
+2025-06-24 22:01:23,147 - INFO - ===== Iniciando processamento para Belo_Horizonte (3106200) =====
+2025-06-24 22:01:23,158 - INFO - Dados para Belo_Horizonte filtrados e limpos: (1152, 10)
+2025-06-24 22:01:23,166 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:01:36,928 - INFO - Modelo treinado para Belo_Horizonte. Perda final de validação: 0.0656
+2025-06-24 22:01:37,200 - INFO - Métricas de teste para Belo_Horizonte: MAE=0.7455, RMSE=1.3599, R²=-0.2861
+2025-06-24 22:01:37,738 - INFO - Gráficos salvos para Belo_Horizonte
+2025-06-24 22:01:37,742 - INFO - Métricas e previsões salvas para Belo_Horizonte
+2025-06-24 22:01:37,743 - INFO - ===== Processamento para Belo_Horizonte concluído =====
+
+2025-06-24 22:01:37,743 - INFO - ===== Iniciando processamento para Vitoria (3205309) =====
+2025-06-24 22:01:37,752 - INFO - Dados para Vitoria filtrados e limpos: (1152, 10)
+2025-06-24 22:01:37,760 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:01:50,024 - INFO - Modelo treinado para Vitoria. Perda final de validação: 0.0740
+2025-06-24 22:01:50,270 - INFO - Métricas de teste para Vitoria: MAE=2.5992, RMSE=4.7801, R²=0.1100
+2025-06-24 22:01:50,855 - INFO - Gráficos salvos para Vitoria
+2025-06-24 22:01:50,859 - INFO - Métricas e previsões salvas para Vitoria
+2025-06-24 22:01:50,859 - INFO - ===== Processamento para Vitoria concluído =====
+
+2025-06-24 22:01:50,860 - INFO - ===== Iniciando processamento para Rio_de_Janeiro (3304557) =====
+2025-06-24 22:01:50,869 - INFO - Dados para Rio_de_Janeiro filtrados e limpos: (1152, 10)
+2025-06-24 22:01:50,876 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:02:04,672 - INFO - Modelo treinado para Rio_de_Janeiro. Perda final de validação: 0.0670
+2025-06-24 22:02:04,928 - INFO - Métricas de teste para Rio_de_Janeiro: MAE=0.4429, RMSE=0.6110, R²=0.3211
+2025-06-24 22:02:05,469 - INFO - Gráficos salvos para Rio_de_Janeiro
+2025-06-24 22:02:05,474 - INFO - Métricas e previsões salvas para Rio_de_Janeiro
+2025-06-24 22:02:05,475 - INFO - ===== Processamento para Rio_de_Janeiro concluído =====
+
+2025-06-24 22:02:05,475 - INFO - ===== Iniciando processamento para Sao_Paulo (3550308) =====
+2025-06-24 22:02:05,484 - INFO - Dados para Sao_Paulo filtrados e limpos: (1152, 10)
+2025-06-24 22:02:05,493 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:02:32,334 - INFO - Modelo treinado para Sao_Paulo. Perda final de validação: 0.0517
+2025-06-24 22:02:32,594 - INFO - Métricas de teste para Sao_Paulo: MAE=0.4293, RMSE=0.6912, R²=-0.8945
+2025-06-24 22:02:33,140 - INFO - Gráficos salvos para Sao_Paulo
+2025-06-24 22:02:33,144 - INFO - Métricas e previsões salvas para Sao_Paulo
+2025-06-24 22:02:33,145 - INFO - ===== Processamento para Sao_Paulo concluído =====
+
+2025-06-24 22:02:33,145 - INFO - ===== Iniciando processamento para Curitiba (4106902) =====
+2025-06-24 22:02:33,157 - INFO - Dados para Curitiba filtrados e limpos: (1152, 10)
+2025-06-24 22:02:33,165 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:02:45,824 - INFO - Modelo treinado para Curitiba. Perda final de validação: 0.0927
+2025-06-24 22:02:46,112 - INFO - Métricas de teste para Curitiba: MAE=0.8115, RMSE=1.5230, R²=-0.8251
+2025-06-24 22:02:46,678 - INFO - Gráficos salvos para Curitiba
+2025-06-24 22:02:46,683 - INFO - Métricas e previsões salvas para Curitiba
+2025-06-24 22:02:46,684 - INFO - ===== Processamento para Curitiba concluído =====
+
+2025-06-24 22:02:46,684 - INFO - ===== Iniciando processamento para Florianopolis (4205407) =====
+2025-06-24 22:02:46,692 - INFO - Dados para Florianopolis filtrados e limpos: (1152, 10)
+2025-06-24 22:02:46,699 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:03:14,281 - INFO - Modelo treinado para Florianopolis. Perda final de validação: 0.0450
+2025-06-24 22:03:14,524 - INFO - Métricas de teste para Florianopolis: MAE=0.5379, RMSE=0.9785, R²=0.3953
+2025-06-24 22:03:15,090 - INFO - Gráficos salvos para Florianopolis
+2025-06-24 22:03:15,094 - INFO - Métricas e previsões salvas para Florianopolis
+2025-06-24 22:03:15,095 - INFO - ===== Processamento para Florianopolis concluído =====
+
+2025-06-24 22:03:15,096 - INFO - ===== Iniciando processamento para Porto_Alegre (4314902) =====
+2025-06-24 22:03:15,107 - INFO - Dados para Porto_Alegre filtrados e limpos: (1152, 10)
+2025-06-24 22:03:15,114 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:03:29,900 - INFO - Modelo treinado para Porto_Alegre. Perda final de validação: 0.0946
+2025-06-24 22:03:30,177 - INFO - Métricas de teste para Porto_Alegre: MAE=1.4763, RMSE=2.2659, R²=0.2599
+2025-06-24 22:03:30,772 - INFO - Gráficos salvos para Porto_Alegre
+2025-06-24 22:03:30,776 - INFO - Métricas e previsões salvas para Porto_Alegre
+2025-06-24 22:03:30,777 - INFO - ===== Processamento para Porto_Alegre concluído =====
+
+2025-06-24 22:03:30,777 - INFO - ===== Iniciando processamento para Campo_Grande (5002704) =====
+2025-06-24 22:03:30,787 - INFO - Dados para Campo_Grande filtrados e limpos: (1152, 10)
+2025-06-24 22:03:30,793 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:03:37,452 - INFO - Modelo treinado para Campo_Grande. Perda final de validação: 0.1065
+2025-06-24 22:03:37,696 - INFO - Métricas de teste para Campo_Grande: MAE=0.6093, RMSE=0.8061, R²=0.7439
+2025-06-24 22:03:38,270 - INFO - Gráficos salvos para Campo_Grande
+2025-06-24 22:03:38,274 - INFO - Métricas e previsões salvas para Campo_Grande
+2025-06-24 22:03:38,275 - INFO - ===== Processamento para Campo_Grande concluído =====
+
+2025-06-24 22:03:38,275 - INFO - ===== Iniciando processamento para Cuiaba (5103403) =====
+2025-06-24 22:03:38,286 - INFO - Dados para Cuiaba filtrados e limpos: (1152, 10)
+2025-06-24 22:03:38,293 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:03:53,843 - INFO - Modelo treinado para Cuiaba. Perda final de validação: 0.0549
+2025-06-24 22:03:54,085 - INFO - Métricas de teste para Cuiaba: MAE=1.1588, RMSE=1.7400, R²=0.4466
+2025-06-24 22:03:54,627 - INFO - Gráficos salvos para Cuiaba
+2025-06-24 22:03:54,632 - INFO - Métricas e previsões salvas para Cuiaba
+2025-06-24 22:03:54,632 - INFO - ===== Processamento para Cuiaba concluído =====
+
+2025-06-24 22:03:54,633 - INFO - ===== Iniciando processamento para Goiania (5208707) =====
+2025-06-24 22:03:54,643 - INFO - Dados para Goiania filtrados e limpos: (1152, 10)
+2025-06-24 22:03:54,650 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:04:17,016 - INFO - Modelo treinado para Goiania. Perda final de validação: 0.0165
+2025-06-24 22:04:17,267 - INFO - Métricas de teste para Goiania: MAE=0.9904, RMSE=1.3985, R²=0.5570
+2025-06-24 22:04:17,820 - INFO - Gráficos salvos para Goiania
+2025-06-24 22:04:17,824 - INFO - Métricas e previsões salvas para Goiania
+2025-06-24 22:04:17,825 - INFO - ===== Processamento para Goiania concluído =====
+
+2025-06-24 22:04:17,825 - INFO - ===== Iniciando processamento para Brasilia (5300108) =====
+2025-06-24 22:04:17,834 - INFO - Dados para Brasilia filtrados e limpos: (1152, 10)
+2025-06-24 22:04:17,842 - INFO - Dados preparados para o modelo. Treino: (1036, 12, 1), Validação: (40, 12, 1), Teste: (40, 12, 1)
+2025-06-24 22:04:29,563 - INFO - Modelo treinado para Brasilia. Perda final de validação: 0.0733
+2025-06-24 22:04:29,810 - INFO - Métricas de teste para Brasilia: MAE=1.4185, RMSE=1.9908, R²=0.6522
+2025-06-24 22:04:30,374 - INFO - Gráficos salvos para Brasilia
+2025-06-24 22:04:30,378 - INFO - Métricas e previsões salvas para Brasilia
+2025-06-24 22:04:30,379 - INFO - ===== Processamento para Brasilia concluído =====
+
+2025-06-24 22:04:30,380 - INFO - --- Treinamento em lote concluído para todas as cidades ---

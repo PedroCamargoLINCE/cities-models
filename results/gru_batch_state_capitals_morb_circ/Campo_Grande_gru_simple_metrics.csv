@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.609299515376484,0.8061386837835597,0.7438849962234062,Campo_Grande,gru_simple,5002704,12,200,32

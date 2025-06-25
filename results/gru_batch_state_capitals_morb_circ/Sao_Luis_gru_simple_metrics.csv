@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.5028325864652803,0.7496945232288998,0.4465507790293527,Sao_Luis,gru_simple,2111300,12,200,32

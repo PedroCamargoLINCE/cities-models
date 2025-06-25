@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.5379332985160531,0.9785342939346865,0.3952987490272575,Florianopolis,gru_simple,4205407,12,200,32

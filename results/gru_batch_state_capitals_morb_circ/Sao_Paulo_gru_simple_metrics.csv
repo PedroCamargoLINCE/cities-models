@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.42927611961648876,0.691204441135402,-0.8944696565961046,Sao_Paulo,gru_simple,3550308,12,200,32

@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+1.1588417184657547,1.7399581613275683,0.4465991600222843,Cuiaba,gru_simple,5103403,12,200,32

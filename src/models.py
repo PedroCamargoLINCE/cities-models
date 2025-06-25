@@ -8,7 +8,7 @@ from typing import Optional, Tuple
 class LastValueBaseline:
     def fit(self, X, y):
         pass  # No training needed
-    def predict(self, X, target_index=None, feature_columns=None, forecast_horizon=4):
+    def predict(self, X, target_index=None, feature_columns=None, forecast_horizon=1): # Changed default from 4 to 1
         # Predict the sum of the last forecast_horizon values of the target column in the input window
         if feature_columns is not None and 'target' in feature_columns:
             target_index = feature_columns.index('target')

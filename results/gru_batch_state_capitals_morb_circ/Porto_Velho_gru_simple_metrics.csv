@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.7232359333445153,0.9870403472721712,0.33040917640804246,Porto_Velho,gru_simple,1100205,12,200,32

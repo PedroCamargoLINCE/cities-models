@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+1.5811277625348137,2.710250143577022,0.42643632466797643,Boa_Vista,gru_simple,1400100,12,200,32

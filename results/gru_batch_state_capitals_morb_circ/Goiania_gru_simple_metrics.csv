@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.9903777838398644,1.3984784983117988,0.5570183271339058,Goiania,gru_simple,5208707,12,200,32

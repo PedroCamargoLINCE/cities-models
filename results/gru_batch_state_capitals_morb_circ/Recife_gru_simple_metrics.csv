@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+1.0443457641102332,1.8979834434279554,0.6136697732477098,Recife,gru_simple,2611606,12,200,32

@@ -24,50 +24,77 @@ except ImportError:
 
 def train_model(model, X_train, y_train, X_val=None, y_val=None, epochs=100, batch_size=32, patience=10, verbose=1, callbacks=None):
     """
-    Train a model (supports sklearn-like and keras models).
+    Train a Keras model.
     """
-    if hasattr(model, 'fit') and keras and isinstance(model, keras.Model):
-        cb = []
-        if patience:
-            cb.append(keras.callbacks.EarlyStopping(monitor='val_loss', patience=patience, restore_best_weights=True))
-            cb.append(keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=max(1, patience//2), min_lr=1e-6, verbose=1))
-        if callbacks:
-            cb.extend(callbacks)
-        # Always pass verbose as integer for progress bar
-        # Keras 3+ expects verbose as str, but for progress bar use 'auto' or 1
-        # We'll use 'auto' for best compatibility
-        history = model.fit(
-            X_train, y_train,
-            validation_data=(X_val, y_val) if X_val is not None and y_val is not None else None,
-            epochs=epochs,
-            batch_size=batch_size,
-            callbacks=cb,
-            verbose='auto'  # Use 'auto' for progress bar in most environments
-        )
-        return history
-    else:
-        # For sklearn-like or baseline models
-        model.fit(X_train, y_train)
-        return None
+    if not (keras and isinstance(model, keras.Model)):
+        raise TypeError("This train_model function is designed for Keras models.")
 
-def evaluate_model(model, X_test, y_test, scaler=None, target_idx=0, forecast_horizon=1):
-    y_pred_scaled = model.predict(X_test)
+    # Define standard callbacks
+    early_stopping = keras.callbacks.EarlyStopping(
+        monitor='val_loss', 
+        patience=patience, 
+        restore_best_weights=True
+    )
+    reduce_lr = keras.callbacks.ReduceLROnPlateau(
+        monitor='val_loss', 
+        factor=0.5, 
+        patience=max(1, patience // 2), 
+        min_lr=1e-6
+    )
+    
+    all_callbacks = [early_stopping, reduce_lr]
+    if callbacks:
+        all_callbacks.extend(callbacks)
 
-    y_true_scaled = reduce_to_1d(y_test)
-    y_pred_scaled = reduce_to_1d(y_pred_scaled)
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val) if X_val is not None and y_val is not None else None,
+        epochs=epochs,
+        batch_size=batch_size,
+        callbacks=all_callbacks,
+        verbose=verbose
+    )
+    return history
 
-    if scaler:
-        # Denormalize using the correct formula for sums of scaled values
-        y_true_denorm = y_true_scaled * scaler.scale_[target_idx] + forecast_horizon * scaler.mean_[target_idx]
-        y_pred_denorm = y_pred_scaled * scaler.scale_[target_idx] + forecast_horizon * scaler.mean_[target_idx]
-    else:
-        y_true_denorm = y_true_scaled
-        y_pred_denorm = y_pred_scaled
+def evaluate_model(y_true, y_pred, scaler, target_idx=0):
+    """
+    Evaluate the model, handling denormalization before calculating metrics.
 
+    Args:
+        y_true (np.ndarray): True target values (normalized).
+        y_pred (np.ndarray): Predicted target values (normalized).
+        scaler (StandardScaler): The scaler fitted on the training data.
+        target_idx (int): The index of the target column in the scaled data.
+
+    Returns:
+        A dictionary with metrics and denormalized true and predicted values.
+    """
+    y_true_1d = reduce_to_1d(y_true)
+    y_pred_1d = reduce_to_1d(y_pred)
+
+    # Denormalize predictions and true values
+    num_features = scaler.n_features_in_
+    
+    true_dummy = np.zeros((len(y_true_1d), num_features))
+    true_dummy[:, target_idx] = y_true_1d
+    y_true_denorm = scaler.inverse_transform(true_dummy)[:, target_idx]
+
+    pred_dummy = np.zeros((len(y_pred_1d), num_features))
+    pred_dummy[:, target_idx] = y_pred_1d
+    y_pred_denorm = scaler.inverse_transform(pred_dummy)[:, target_idx]
+
+    # Calculate metrics on the denormalized data
     mae = mean_absolute_error(y_true_denorm, y_pred_denorm)
     rmse = np.sqrt(mean_squared_error(y_true_denorm, y_pred_denorm))
     r2 = r2_score(y_true_denorm, y_pred_denorm)
-    return {'mae': mae, 'rmse': rmse, 'r2': r2}
+
+    return {
+        'mae': mae, 
+        'rmse': rmse, 
+        'r2': r2, 
+        'y_true_denorm': y_true_denorm, 
+        'y_pred_denorm': y_pred_denorm
+    }
 
 def generate_forecasts(model, X_test):
     """

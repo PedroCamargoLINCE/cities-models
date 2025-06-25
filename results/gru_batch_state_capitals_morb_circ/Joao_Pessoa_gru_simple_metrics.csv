@@ -1,0 +1,2 @@
+mae,rmse,r2,city,model,cd_mun,sequence_length,epochs,gru_units
+0.6559225377067793,0.9355065621127416,0.10973815316480862,Joao_Pessoa,gru_simple,2507507,12,200,32
