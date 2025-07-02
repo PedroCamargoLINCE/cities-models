@@ -1,96 +1,170 @@
 import os
-from typing import List
-
+import glob
+import json
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
 import xgboost as xgb
+from pathlib import Path
+from datetime import timedelta
 
-from .preprocessing import load_city_data, filter_city, clean_timeseries
-
-
-def _load_model_components(city_dir: str, city_code: str):
-    model_path = os.path.join(city_dir, f"{city_code}_xgboost_model.json")
-    scaler_path = os.path.join(city_dir, f"{city_code}_scaler.pkl")
-    metrics_path = os.path.join(city_dir, f"{city_code}_xgboost_metrics.csv")
-    model = xgb.XGBRegressor()
-    model.load_model(model_path)
-    scaler = joblib.load(scaler_path)
-    metrics = pd.read_csv(metrics_path)
-    seq_len = int(metrics["sequence_length"].iloc[0])
-    horizon = int(metrics["forecast_horizon"].iloc[0])
-    return model, scaler, seq_len, horizon
+# Use a direct import which works when running as a module
+from preprocessing import load_city_data, filter_city, clean_timeseries
 
 
-def _prepare_city_dataframe(csv_path: str, city_code: int) -> pd.DataFrame:
-    df = load_city_data(csv_path)
-    df_city = filter_city(df, cd_mun=city_code)
-    df_city = clean_timeseries(df_city, target_column="target")
-    df_city = df_city.sort_values("week")
-    return df_city
+def _exponential_smooth(pred, prev_pred, alpha=0.3):
+    """Applies exponential smoothing to the prediction."""
+    return alpha * pred + (1 - alpha) * prev_pred
 
 
-def _exponential_smooth(value: float, prev: float, alpha: float = 0.5) -> float:
-    if prev is None:
-        return value
-    return alpha * value + (1 - alpha) * prev
+def forecast_city(model, city_df, scaler, params):
+    """
+    Generates a long-term autoregressive forecast for a single city.
 
+    Args:
+        model: The pre-trained XGBoost model.
+        city_df (pd.DataFrame): The historical data for the city.
+        scaler (StandardScaler): The scaler fitted on the training data.
+        params (dict): A dictionary of model parameters, including 'sequence_length'.
 
-def forecast_city(
-    city_dir: str,
-    dataset_csv: str,
-    city_code: str,
-    end_year: int = 2035,
-) -> pd.DataFrame:
-    model, scaler, seq_len, horizon = _load_model_components(city_dir, city_code)
-    df_city = _prepare_city_dataframe(dataset_csv, int(city_code))
+    Returns:
+        pd.DataFrame: A dataframe containing the forecast with 'data' and 'previsao' columns.
+    """
+    sequence_length = params["sequence_length"]
+    # Ensure 'target' is in the feature columns list for indexing
+    feature_cols = list(city_df.columns)
+    if "target" not in feature_cols:
+        # This case should not happen if data is prepared correctly
+        raise ValueError("Column 'target' not found in the dataframe")
 
-    feature_cols = [c for c in df_city.columns if c not in ["CD_MUN", "week", "city", "state"]]
-    data = df_city[feature_cols].values.astype(float)
-    last_week = df_city["week"].iloc[-1] if "week" in df_city.columns else len(df_city) - 1
+    target_idx = feature_cols.index("target")
+    
+    # Initialize the window with the most recent data (unscaled)
+    window = city_df.values[-sequence_length:]
+    
+    # Determine the forecast horizon
+    last_date = city_df.index[-1]
+    end_date = pd.to_datetime("2035-12-31")
+    # Calculate the number of months to forecast
+    months_to_forecast = (end_date.year - last_date.year) * 12 + (end_date.month - last_date.month)
 
-    window = data[-seq_len:]
-    preds: List[float] = []
-    dates: List[int] = []
-    prev_pred = None
-
-    months = (end_year - 2023) * 12
-    for _ in range(months):
-        X = window.reshape(1, -1)
-        X_scaled = scaler.transform(X)
-        pred = float(model.predict(X_scaled)[0])
-        pred = _exponential_smooth(pred, prev_pred)
+    preds = []
+    dates = []
+    
+    # Use the last known unscaled value for initial smoothing
+    prev_pred = city_df["target"].iloc[-1]
+    
+    current_date = last_date
+    
+    for _ in range(months_to_forecast):
+        # The window contains unscaled data. We scale it just for prediction.
+        X_scaled = scaler.transform(window)
+        
+        # Predict the next step (the prediction is scaled)
+        pred_scaled = float(model.predict(X_scaled.reshape(1, -1))[0])
+        
+        # To inverse_transform, we need a dummy array of the correct shape
+        dummy_row = np.zeros((1, len(feature_cols)))
+        dummy_row[0, target_idx] = pred_scaled
+        
+        # Inverse transform to get the prediction in its original, unscaled value
+        pred_unscaled = scaler.inverse_transform(dummy_row)[0, target_idx]
+        
+        # Apply smoothing to the unscaled prediction
+        pred = _exponential_smooth(pred_unscaled, prev_pred)
         prev_pred = pred
-
-        last_week += horizon
-        dates.append(int(last_week))
+        
         preds.append(pred)
-
-        new_row = window[-1].copy()
-        if "target" in feature_cols:
-            target_idx = feature_cols.index("target")
-            new_row[target_idx] = pred
+        
+        # Update date for the next prediction step
+        current_date += timedelta(weeks=4)  # Approximate a month
+        dates.append(current_date)
+        
+        # Create the next row for the input window using unscaled data
+        new_row = window[-1].copy()  # Copy the last known row
+        new_row[target_idx] = pred  # Update the target with the new unscaled prediction
+        
+        # Append the new row and slide the window
         window = np.vstack([window[1:], new_row])
 
     return pd.DataFrame({"data": dates, "previsao": preds})
 
 
-def generate_all_forecasts(results_root: str = "results", output_dir: str = "long_term_forecasts"):
-    os.makedirs(output_dir, exist_ok=True)
-    for root, _, files in os.walk(results_root):
-        for file in files:
-            if file.endswith("_xgboost_model.json"):
-                city_code = file.split("_")[0]
-                dataset_key = None
-                if "(" in root and ")" in root:
-                    dataset_key = root.split("(")[-1].split(")")[0]
-                if dataset_key:
-                    csv_path = os.path.join("data", f"df_base_{dataset_key}.csv")
-                    if not os.path.exists(csv_path):
-                        continue
-                    df_out = forecast_city(root, csv_path, city_code)
-                    out_file = os.path.join(output_dir, f"{city_code}_forecast.csv")
-                    df_out.to_csv(out_file, index=False)
+def generate_all_forecasts():
+    """
+    Finds all trained XGBoost models, generates long-term forecasts for each city,
+    and saves them to a structured output directory.
+    """
+    base_path = Path("./")
+    results_path = base_path / "results"
+    data_path = base_path / "data"
+    output_path = base_path / "long_term_forecasts"
+
+    print("Starting long-term forecast generation...")
+
+    
+    # Find all XGBoost model files
+    model_paths = list(results_path.glob("**/*xgboost_model.json"))
+    
+    if not model_paths:
+        print("No XGBoost models found in the 'results' directory.")
+        return
+
+    for model_path in model_paths:
+        model_dir = model_path.parent
+        
+        # Extract the dataset identifier from the directory name
+        # e.g., "xgboost_batch_all_municipalities(morb_circ)" -> "morb_circ"
+        name = model_dir.name
+        try:
+            dataset_id = name.split('(')[1].split(')')[0]
+        except IndexError:
+            dataset_id = name  # assume name é o ID
+        print(f"Processing dataset: {dataset_id}")
+
+        # Construct paths
+        data_file = data_path / f"df_base_{dataset_id}.csv"
+        scaler_file = model_dir / "scaler.pkl"
+        params_file = model_dir / "params.json"
+        
+        # Create a dedicated output directory for this dataset's forecasts
+        forecast_dir = output_path / model_dir.name
+        forecast_dir.mkdir(parents=True, exist_ok=True)
+
+        # Load assets
+        if not all([data_file.exists(), scaler_file.exists(), params_file.exists()]):
+            print(f"Missing required files for {dataset_id} (data, scaler, or params). Skipping.")
+            continue
+            
+        print("Loading data and model assets...")
+        df = load_city_data(str(data_file))
+        model = xgb.XGBRegressor()
+        model.load_model(str(model_path))
+        scaler = joblib.load(scaler_file)
+        with open(params_file, 'r') as f:
+            params = json.load(f)
+            
+        all_cities = df["cod_mun"].unique()
+        print(f"Found {len(all_cities)} cities in {dataset_id}.csv")
+
+        for i, city_code in enumerate(all_cities):
+            print(f"  ({i+1}/{len(all_cities)}) Forecasting for city: {city_code}...")
+            
+            city_df = filter_city(df, city_code)
+            city_df_cleaned, _ = clean_timeseries(city_df)
+            
+            if city_df_cleaned.shape[0] < params["sequence_length"]:
+                print(f"    Skipping city {city_code} due to insufficient data for the model's sequence length.")
+                continue
+
+            # Generate forecast
+            forecast_df = forecast_city(model, city_df_cleaned, scaler, params)
+            
+            # Save forecast to the correct sub-directory
+            output_file = forecast_dir / f"{city_code}_forecast.csv"
+            forecast_df.to_csv(output_file, index=False)
+            
+    print("\nForecast generation complete.")
 
 
 if __name__ == "__main__":
