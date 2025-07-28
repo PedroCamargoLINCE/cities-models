@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/xgboost-3.0.0-brightgreen.svg" alt="XGBoost">
   <img src="https://img.shields.io/badge/tensorflow-2.19.0-orange.svg" alt="TensorFlow">
   <img src="https://img.shields.io/badge/pandas-2.2.3-lightgrey.svg" alt="Pandas">
-  <img src="https://img.shields.io/badge/coverage-90%25-brightgreen.svg" alt="Test Coverage">
+  <img src="https://img.shields.io/badge/coverage-98%25-brightgreen.svg" alt="Test Coverage">
 </p>
 
 # cities-models
