@@ -1,0 +1,75 @@
+name: Add SMAPE to All Results
+
+on: 
+  workflow_dispatch:  # Manual trigger - you click a button to run it
+
+jobs:
+  add-smape:
+    runs-on:  ubuntu-latest-16-cores  # 600 GB disk - the biggest available
+    
+    timeout-minutes: 120  # 2 hours max
+    
+    steps:
+      - name: Free up disk space
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          
+          echo "Disk space after cleanup:"
+          df -h
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: false  # Don't download LFS files
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name:  Install dependencies
+        run: |
+          pip install pandas numpy scikit-learn
+      
+      - name: Check disk space before processing
+        run: df -h
+      
+      - name: Run SMAPE computation
+        run: |
+          python scripts/add_smape_to_all_results.py
+      
+      - name: Check disk space after processing
+        run: df -h
+      
+      - name: Upload consolidated results as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smape-results
+          path: |
+            results/consolidated_metrics_with_smape.csv
+          retention-days: 90
+      
+      - name:  Commit updated metrics files back to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add all updated metrics files
+          git add results/**/*_metrics.csv
+          git add notebooks/results/**/*_metrics.csv
+          git add results/consolidated_metrics_with_smape.csv
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add SMAPE metric to all results files"
+            git push
+          fi
